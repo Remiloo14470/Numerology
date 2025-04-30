@@ -1,0 +1,8 @@
+.gitignore
+.idea/
+.idea
+__pycache__
+__pycahce__/
+*.pyc
+base64.txt
+*.lock
