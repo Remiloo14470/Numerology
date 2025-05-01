@@ -2,26 +2,53 @@ from pydantic import BaseModel, Field
 
 
 class UserResponse(BaseModel):
-    id: str = Field(alias='id')
+    class Info(BaseModel):
+        id: str = Field(alias='id')
+        user_name: str = Field(alias='user_name')
+        date_of_birth: str = Field(alias='date_of_birth')
+    class Error(BaseModel):
+        error: str
+
 
 class DemoAnalysisResponse(BaseModel):
-    message: str = Field(alias='message')
+    class Info(BaseModel):
+        message: str = Field(alias='message')
+    class Error(BaseModel):
+        error: str
 
 class LuckCodeResponse(BaseModel):
-    luck_code: str = Field(alias='luck_code')
+    class Info(BaseModel):
+        luck_code: str = Field(alias='luck_code')
+    class Error(BaseModel):
+        error: str
 
 class CardTypeResponse(BaseModel):
-    cardtype: str = Field(alias='cardtype')
+    class Info(BaseModel):
+        card_type: str = Field(alias='cardtype')
+    class Error(BaseModel):
+        error: str
 
 class MatrixResponse(BaseModel):
-    status: str = Field(alias='status')
-    result: str = Field(alias='result')
+    class Info(BaseModel):
+        status: str = Field(alias='status')
+        result: str = Field(alias='result')
+    class Error(BaseModel):
+        error: str
 
 class CompatibilityResponse(BaseModel):
-    compatibility_score: float = Field(alias='compatibility_score')
+    class Info(BaseModel):
+        compatibility_score: float = Field(alias='compatibility_score')
+    class Error(BaseModel):
+        error: str
 
 class SoulMissionResponse(BaseModel):
-    mission_info: str = Field(alias='mission_info')
+    class Info(BaseModel):
+        mission_info: str = Field(alias='mission_info')
+    class Error(BaseModel):
+        error: str
 
 class SoulCodeResponse(BaseModel):
-    soul_code: str = Field(alias='soul_code')
+    class Info(BaseModel):
+        soul_code: str = Field(alias='soul_code')
+    class Error(BaseModel):
+        error: str

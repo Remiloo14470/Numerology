@@ -1,6 +1,5 @@
 import uvicorn
-from app.api.v1.routes import *
-from preload import *
+from preload import root_app
 
 
 if __name__ == "__main__":

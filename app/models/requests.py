@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, Field
 from enum import Enum
 from typing import Optional
 
@@ -6,33 +6,35 @@ from typing import Optional
 # Модели
 class UserRequest(BaseModel):
     id: str = Field(alias='id')
+    user_name: str = Field(alias='user_name')
+    date_of_birth: str = Field(alias='date_of_birth')
 
 
 class DemoAnalysisRequest(BaseModel):
-    birth_of_date: str = Field(alias='birth')
+    date_of_birth: str = Field(alias='birth')
 
 
 class LuckCodeRequest(BaseModel):
-    birth_of_date: str = Field(alias='birth')
+    date_of_birth: str = Field(alias='birth')
 
 
 class CardType(str, Enum):
-    destiny = 'destiny'
-    time = 'time'
+    destiny: str = Field(alias='destiny')
+    time: str = Field(alias='time')
 
 
 class CardRequest(BaseModel):
-    birth_of_date: str = Field(alias='birth')
+    date_of_birth: str = Field(alias='birth')
     card_type: CardType
 
 
 class MatrixType(str, Enum):
-    potencial = 'potencial'
-    destiny = 'destiny'
+    potencial: str = Field(alias='potencial')
+    destiny = str = Field(alias='destiny')
 
 
 class MatrixRequest(BaseModel):
-    birth_of_date: str = Field(alias='birth')
+    date_of_birth: str = Field(alias='birth')
     matrix_type: MatrixType
 
 
@@ -42,8 +44,8 @@ class CompatibilityRequest(BaseModel):
 
 
 class ErrorType(str, Enum):
-    сarma_error = 'сarma'
-    family_error = 'family'
+    сarma_error: str = Field(alias='сarma')
+    family_error: str = Field(alias='family')
 
 
 class ErrorsRequest(BaseModel):
@@ -52,11 +54,11 @@ class ErrorsRequest(BaseModel):
 
 
 class SoulMissionRequest(BaseModel):
-    birth_of_date: str = Field(alias='birth')
+    date_of_birth: str = Field(alias='birth')
 
 
 class SoulCodeRequest(BaseModel):
-    birth_of_date: str = Field(alias='birth')
+    date_of_birth: str = Field(alias='birth')
 
 
 
