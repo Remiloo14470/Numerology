@@ -39,3 +39,4 @@ zopfli==0.2.3.post1
 aiogram~=3.20.0.post0
 openai~=1.76.2
 loader~=2017.9.11
+pydantic_settings~=2.9.1

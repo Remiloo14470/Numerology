@@ -3,9 +3,8 @@ import json
 import asyncio
 import time
 from loguru import logger
-from aiogram.exceptions import TelegramBadRequest
-from openai import RateLimitError, APIConnectionError, OpenAIError
-from preload import assistant_id
+from openai import APIConnectionError, OpenAIError
+from utils.create_assistant import assistant_id
 from utils.get_async_client import client
 from utils import assistant_prompt
 

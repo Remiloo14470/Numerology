@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, Asyn
 from sqlalchemy.sql.ddl import DropTable
 from typing_extensions import Any
 from database.database import Base
-from api.filters.projects_filters import GoodsFilter
 
 
 class BaseInterface:
