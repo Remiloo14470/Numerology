@@ -11,3 +11,8 @@ class DBSettings(BaseSettings):
     db_password: str = Field(alias='dbpassword')
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+
+class OtherSettings(BaseSettings):
+    openai_api_key: str = Field(alias="openai_api_key")
+
+    model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')

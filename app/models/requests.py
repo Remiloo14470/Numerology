@@ -29,8 +29,8 @@ class CardRequest(BaseModel):
 
 
 class MatrixType(str, Enum):
-    potencial: str = Field(alias='potencial')
-    destiny = str = Field(alias='destiny')
+    potential: str = Field(alias='potential')
+    destiny: str = Field(alias='destiny')
 
 
 class MatrixRequest(BaseModel):

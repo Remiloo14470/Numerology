@@ -157,7 +157,11 @@ class BaseInterface:
                     await session.commit()
                 except Exception as ex:
                     logger.warning(f'COMMIT FAILED: {model.__name__}, {kwargs=}')
-            return res
+                    return ex
+                created = True
+            else:
+                created = False
+            return res.id, created
 
     async def update_row(self, model, id, **kwargs):
 
