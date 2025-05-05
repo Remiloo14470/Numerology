@@ -161,7 +161,7 @@ class BaseInterface:
                 created = True
             else:
                 created = False
-            return res.id, created
+            return res, created
 
     async def update_row(self, model, id, **kwargs):
 

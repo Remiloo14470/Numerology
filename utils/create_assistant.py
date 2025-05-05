@@ -1,6 +1,5 @@
-import openai
 from utils.get_async_client import client
-from utils.assistant_prompt import assistant_info
+from misc.assistant_prompt import assistant_info
 from loguru import logger
 
 # Создание ассистента

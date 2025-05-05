@@ -1,21 +1,31 @@
-from pydantic import BaseModel, Field
+import validator
+from pydantic import BaseModel, Field, validator
 from enum import Enum
-from typing import Optional
+from datetime import date, datetime
+from pydantic import field_validator
 
 
-# Модели
+# Schemas
+
 class UserRequest(BaseModel):
     id: str = Field(alias='id')
     user_name: str = Field(alias='user_name')
-    date_of_birth: str = Field(alias='date_of_birth')
+    date_of_birth: str = Field(..., pattern=r'^\d{2}-\d{2}-\d{2}$')  # Формат ДД-ММ-ГГ
+
+    @classmethod
+    def validate_date_of_birth(cls, v: str) -> datetime:
+        try:
+            return datetime.strptime(v, "%d-%m-%y")
+        except ValueError:
+            raise ValueError("Дата должна быть в формате ДД-ММ-ГГ")
 
 
 class DemoAnalysisRequest(BaseModel):
-    date_of_birth: str = Field(alias='birth')
+    date_of_birth: date = Field(alias='birth')
 
 
 class LuckCodeRequest(BaseModel):
-    date_of_birth: str = Field(alias='birth')
+    date_of_birth: date = Field(alias='birth')
 
 
 class CardType(str, Enum):
@@ -24,7 +34,7 @@ class CardType(str, Enum):
 
 
 class CardRequest(BaseModel):
-    date_of_birth: str = Field(alias='birth')
+    date_of_birth: date = Field(alias='birth')
     card_type: CardType
 
 
@@ -34,7 +44,7 @@ class MatrixType(str, Enum):
 
 
 class MatrixRequest(BaseModel):
-    date_of_birth: str = Field(alias='birth')
+    date_of_birth: date = Field(alias='birth')
     matrix_type: MatrixType
 
 
@@ -58,7 +68,7 @@ class SoulMissionRequest(BaseModel):
 
 
 class SoulCodeRequest(BaseModel):
-    date_of_birth: str = Field(alias='birth')
+    date_of_birth: date = Field(alias='birth')
 
 
 

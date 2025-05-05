@@ -6,7 +6,7 @@ from loguru import logger
 from openai import APIConnectionError, OpenAIError
 from utils.create_assistant import assistant_id
 from utils.get_async_client import client
-from utils import assistant_prompt
+from misc import assistant_prompt
 
 
 async def send_message_to_assistant():
