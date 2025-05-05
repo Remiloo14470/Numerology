@@ -11,7 +11,7 @@ from database.models import Users
 @api_router.post("/create-user", response_model=responses.UserResponse)
 async def create_user(data: requests.UserRequest):
     user_id = str(uuid4())
-    existing_user, created = await db.get_or_create_row(
+    existing_user_id, created = await db.get_or_create_row(
         Users,
         filter_by={"id": user_id},
         id=user_id,
@@ -19,7 +19,7 @@ async def create_user(data: requests.UserRequest):
         date_of_birth=data.date_of_birth,
     )
 
-    result = await db.get_row(Users, id=existing_user)
+    result = await db.get_row(Users, id=existing_user_id)
     status_code = 201 if created else 200
     return JSONResponse(content=result, status_code=status_code)
 
