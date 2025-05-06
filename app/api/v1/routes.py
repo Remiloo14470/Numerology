@@ -1,10 +1,12 @@
+from fastapi import HTTPException
+from services.calculate_matrix import calculate
 from app.models import requests
 from app.models import responses
 from database.initial import db
 from uuid import uuid4
 from app.api.initial import api_router
 from fastapi.responses import JSONResponse
-from database.models import Users
+from database.models import Users, DestinyMatrix
 
 # Эндпоинты
 
@@ -21,7 +23,6 @@ async def create_user(data: requests.UserRequest):
     result = await db.get_row(Users, id=existing_user.id)
     status_code = 201 if created else 200
     return JSONResponse(content=result, status_code=status_code)
-
 
 
 @api_router.post("/demo-analysis")
@@ -42,12 +43,24 @@ async def generate_card(request: requests.CardRequest):
         return JSONResponse(content={"message": "Рассчитываем Карту Времени"}, status_code=200)
 
 
-@api_router.post("/matrix")
-async def calculate_matrix(request: requests.MatrixRequest):
-    if request.matrix_type == "destiny":
-        return JSONResponse(content={"message": "Рассчитываем Матрицу Судьбы"}, status_code=200)
-    elif request.matrix_type == "potential":
-        return JSONResponse(content={"message": "Рассчитываем Матрицу Потенциала"}, status_code=200)
+@api_router.post("/matrix", response_model=responses.MatrixResponse)
+async def calculate_matrix(data: requests.MatrixRequest):
+
+    user = await db.get_row(Users, id=data.user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    matrix_data = calculate(user.date_of_birth, data.matrix_type)
+
+    if data.matrix_type == requests.MatrixType.destiny:
+        await db.add_row(
+            DestinyMatrix,
+            id=str(uuid4()),
+            user_id=user.id,
+            **matrix_data
+        )
+
+    return JSONResponse(content={"matrix_data": matrix_data}, status_code=200)
 
 
 @api_router.post("/compatibility")
