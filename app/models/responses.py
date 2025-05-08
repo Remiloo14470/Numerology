@@ -9,6 +9,9 @@ class UserResponse(BaseModel):
     class Error(BaseModel):
         error: str
 
+    class Config:
+        from_attributes = True
+
 
 class DemoAnalysisResponse(BaseModel):
     class Info(BaseModel):

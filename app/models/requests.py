@@ -1,8 +1,7 @@
-import validator
-from pydantic import BaseModel, Field, validator
+from fastapi import HTTPException
+from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 from datetime import date, datetime
-from pydantic import field_validator
 
 
 # Schemas
@@ -10,14 +9,16 @@ from pydantic import field_validator
 class UserRequest(BaseModel):
     id: str = Field(alias='id')
     user_name: str = Field(alias='user_name')
-    date_of_birth: str = Field(..., pattern=r'^\d{2}-\d{2}-\d{2}$')  # Формат ДД-ММ-ГГ
+    date_of_birth: str = Field(..., pattern=r'^\d{2}-\d{2}-\d{4}$')  # Формат ДД-ММ-ГГГГ
 
-    @classmethod
-    def validate_date_of_birth(cls, v: str) -> datetime:
+
+    @field_validator('date_of_birth')
+    def validate_date_of_birth(cls, v: str) -> str:
         try:
-            return datetime.strptime(v, "%d-%m-%y")
-        except ValueError:
-            raise ValueError("Дата должна быть в формате ДД-ММ-ГГ")
+            datetime.strptime(v, "%d-%m-%Y")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"Неверный формат даты")
+        return v
 
 
 class DemoAnalysisRequest(BaseModel):
@@ -29,8 +30,8 @@ class LuckCodeRequest(BaseModel):
 
 
 class CardType(str, Enum):
-    destiny: str = Field(alias='destiny')
-    time: str = Field(alias='time')
+    destiny ='destiny'
+    time ='time'
 
 
 class CardRequest(BaseModel):
@@ -39,8 +40,8 @@ class CardRequest(BaseModel):
 
 
 class MatrixType(str, Enum):
-    potential: str = Field(alias='potential')
-    destiny: str = Field(alias='destiny')
+    potential = 'potential'
+    destiny = 'destiny'
 
 
 class MatrixRequest(BaseModel):
@@ -54,8 +55,8 @@ class CompatibilityRequest(BaseModel):
 
 
 class ErrorType(str, Enum):
-    сarma_error: str = Field(alias='сarma')
-    family_error: str = Field(alias='family')
+    karma_error = 'karma'
+    family_error = 'family'
 
 
 class ErrorsRequest(BaseModel):

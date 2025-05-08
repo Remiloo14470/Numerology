@@ -1,5 +1,5 @@
 from datetime import date
-from reduce_to_22 import reduce_to_22
+from services.reduce_to_22 import reduce_to_22
 
 
 def calculate(birth_date: date, matrix_type: str) -> dict:

@@ -6,7 +6,7 @@ from database.initial import db
 from uuid import uuid4
 from app.api.initial import api_router
 from fastapi.responses import JSONResponse
-from database.models import Users, DestinyMatrix
+from database.models import Users, UserData
 
 # Эндпоинты
 
@@ -20,9 +20,10 @@ async def create_user(data: requests.UserRequest):
         user_name=data.user_name,
         date_of_birth=data.date_of_birth,
     )
-    result = await db.get_row(Users, id=existing_user.id)
-    status_code = 201 if created else 200
-    return JSONResponse(content=result, status_code=status_code)
+    return JSONResponse(
+        content=responses.UserResponse.model_validate(existing_user).model_dump(),
+        status_code=201 if created else 200
+    )
 
 
 @api_router.post("/demo-analysis")
@@ -48,13 +49,13 @@ async def calculate_matrix(data: requests.MatrixRequest):
 
     user = await db.get_row(Users, id=data.user_id)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=204, detail="User not found")
 
     matrix_data = calculate(user.date_of_birth, data.matrix_type)
 
     if data.matrix_type == requests.MatrixType.destiny:
         await db.add_row(
-            DestinyMatrix,
+            UserData,
             id=str(uuid4()),
             user_id=user.id,
             **matrix_data
