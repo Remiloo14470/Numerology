@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from fastapi import HTTPException
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
@@ -17,12 +19,12 @@ class UserRequest(BaseModel):
         try:
             datetime.strptime(v, "%d-%m-%Y")
         except ValueError as e:
-            raise HTTPException(status_code=400, detail=f"Неверный формат даты")
+            raise HTTPException(status_code=400, detail=f"Дата некорректна. Пожалуйста, проверьте правильность дня, месяца и года.")
         return v
 
 
 class DemoAnalysisRequest(BaseModel):
-    date_of_birth: date = Field(alias='birth')
+    date_of_birth: str = Field(alias='birth')
 
 
 class LuckCodeRequest(BaseModel):
@@ -45,7 +47,7 @@ class MatrixType(str, Enum):
 
 
 class MatrixRequest(BaseModel):
-    date_of_birth: date = Field(alias='birth')
+    user_id: UUID = Field(alias='user_id')
     matrix_type: MatrixType
 
 

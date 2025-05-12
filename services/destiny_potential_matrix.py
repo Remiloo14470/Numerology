@@ -1,5 +1,4 @@
 from datetime import date
-from services.reduce_to_22 import reduce_to_22
 
 
 def calculate(birth_date: date, matrix_type: str) -> dict:
@@ -9,6 +8,12 @@ def calculate(birth_date: date, matrix_type: str) -> dict:
         pass
     else:
         raise ValueError("Invalid matrix type")
+
+
+def reduce_to_22(n: int) -> int:
+    while n > 22:
+        n = sum(int(d) for d in str(n))
+    return n
 
 
 def calculate_destiny_matrix(birth_date: date) -> dict:

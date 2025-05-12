@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 class Users(Base):
     __tablename__ = 'users'
 
-    id: Mapped[str] = mapped_column(String, primary_key=True)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
     user_name: Mapped[str] = mapped_column(String)
     date_of_birth: Mapped[str] = mapped_column(String)
 
@@ -14,7 +14,7 @@ class UserData(Base):
     __tablename__ = 'user_data'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id"))
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"))
     personality: Mapped[int] = mapped_column(Integer)
     spirituality: Mapped[int] = mapped_column(Integer)
     money: Mapped[int] = mapped_column(Integer)

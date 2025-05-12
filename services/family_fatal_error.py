@@ -1,5 +1,5 @@
 from reduce_to_22 import reduce_to_22
-from calculate_matrix import user_data
+from destiny_potential_matrix import user_data
 
 data = user_data
 
@@ -33,7 +33,7 @@ def calculate_fatal_error():  # Роковая ошибка прошлой жи�
 fatal_error = calculate_fatal_error()
 
 def calculate_family_errors():
-    """Расчет родовых ошибок - кармических уроков"""
+    """Расчет родовых ошибок(ПО БОКАМ ТРЕУГОЛЬНИКОВ) - кармических уроков"""
 
     family_error_of_personality_left = reduce_to_22(karma_errors['mother_error_female'] + data['personality'])
     family_error_of_personality_right =reduce_to_22(karma_errors['father_error_male'] + data['personality'])

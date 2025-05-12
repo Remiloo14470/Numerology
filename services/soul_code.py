@@ -1,5 +1,5 @@
 from reduce_to_22 import reduce_to_22
-from calculate_matrix import user_data
+from destiny_potential_matrix import user_data
 from family_fatal_error import calculate_karma_errors, calculate_fatal_error
 
 

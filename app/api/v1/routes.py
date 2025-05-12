@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from services.calculate_matrix import calculate
+from services.destiny_potential_matrix import calculate
 from app.models import requests
 from app.models import responses
 from database.initial import db
@@ -32,15 +32,15 @@ async def demo_analysis(data: requests.DemoAnalysisRequest):
 
 
 @api_router.post("/luck-code")
-async def generate_luck_code(request: requests.LuckCodeRequest):
+async def generate_luck_code(data: requests.LuckCodeRequest):
     return JSONResponse(content={"luck_code": "12345"}, status_code=200)
 
 
 @api_router.post("/generate-card")
-async def generate_card(request: requests.CardRequest):
-    if request.card_type == "destiny":
+async def generate_card(data: requests.CardRequest):
+    if data.card_type == "destiny":
         return JSONResponse(content={"message": "Рассчитываем Карту Судьбы"}, status_code=200)
-    elif request.card_type == "time":
+    elif data.card_type == "time":
         return JSONResponse(content={"message": "Рассчитываем Карту Времени"}, status_code=200)
 
 
@@ -56,7 +56,6 @@ async def calculate_matrix(data: requests.MatrixRequest):
     if data.matrix_type == requests.MatrixType.destiny:
         await db.add_row(
             UserData,
-            id=str(uuid4()),
             user_id=user.id,
             **matrix_data
         )

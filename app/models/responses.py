@@ -1,9 +1,11 @@
+from uuid import UUID
+
 from pydantic import BaseModel, Field
 
 
 class UserResponse(BaseModel):
     class Info(BaseModel):
-        id: str = Field(alias='id')
+        id: UUID
         user_name: str = Field(alias='user_name')
         date_of_birth: str = Field(alias='date_of_birth')
     class Error(BaseModel):
