@@ -1,12 +1,13 @@
 from fastapi import HTTPException
 from services.destiny_potential_matrix import calculate
+from services.family_fatal_error import calculate_err
 from app.models import requests
 from app.models import responses
 from database.initial import db
 from uuid import uuid4
 from app.api.initial import api_router
 from fastapi.responses import JSONResponse
-from database.models import Users, UserData
+from database.models import Users, UserData, UserErrors
 
 # Эндпоинты
 
@@ -68,13 +69,33 @@ async def check_compatibility(request: requests.CompatibilityRequest):
     return JSONResponse(content={"compatibility_score": 85.0}, status_code=200)
 
 
-@api_router.post("/family-error")
-async def calculate_family_error(request: requests.ErrorsRequest):
-    if request.error_type == "carma":
-        return JSONResponse(content={"message": "Рассчитываем Кармическую Ошибку"}, status_code=200)
-    elif request.error_type == "family":
-        return JSONResponse(content={"message": "Рассчитываем Ошибку Рода"}, status_code=200)
+@api_router.post("/family-error", response_model=responses.ErrorResponse)
+async def calculate_errors(data: requests.ErrorsRequest):
+    user = await db.get_row(Users, id=data.user_id)
+    if not user:
+        raise HTTPException(status_code=204, detail="User not found")
 
+    userdata = await db.get_row(UserData, user_id=data.user_id)
+    if not userdata:
+        raise HTTPException(status_code=204, detail="Content not found")
+
+    if data.error_type == requests.ErrorType.karma:
+        karma_errors = calculate_err("karma", userdata)
+        await db.add_row(
+            UserErrors,
+            user_id=user.id,
+            **karma_errors
+        )
+        return JSONResponse(content={"karma_errors": karma_errors}, status_code=200)
+
+    elif data.error_type == requests.ErrorType.family:
+        family_errors = calculate_err("family", userdata)
+        await db.add_row(
+            UserErrors,
+            user_id=user.id,
+            **family_errors
+        )
+        return JSONResponse(content={"family_errors": family_errors}, status_code=200)
 
 @api_router.post("/soul-mission")
 async def calculate_soul_mission(request: requests.SoulMissionRequest):

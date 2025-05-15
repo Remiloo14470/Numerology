@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -7,7 +8,7 @@ class UserResponse(BaseModel):
     class Info(BaseModel):
         id: UUID
         user_name: str = Field(alias='user_name')
-        date_of_birth: str = Field(alias='date_of_birth')
+        date_of_birth: date = Field(alias='date_of_birth')
     class Error(BaseModel):
         error: str
 
@@ -36,7 +37,12 @@ class CardTypeResponse(BaseModel):
 class MatrixResponse(BaseModel):
     class Info(BaseModel):
         status: str = Field(alias='status')
-        result: str = Field(alias='result')
+    class Error(BaseModel):
+        error: str
+
+class ErrorResponse(BaseModel):
+    class Info(BaseModel):
+        status: str = Field(alias='status')
     class Error(BaseModel):
         error: str
 

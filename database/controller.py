@@ -1,6 +1,6 @@
 from typing import Iterable, List
 from loguru import logger
-from sqlalchemy import Select, update, select
+from sqlalchemy import Select, update
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
 from sqlalchemy.sql.ddl import DropTable
 from typing_extensions import Any

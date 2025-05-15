@@ -11,17 +11,15 @@ from datetime import date, datetime
 class UserRequest(BaseModel):
     id: str = Field(alias='id')
     user_name: str = Field(alias='user_name')
-    date_of_birth: str = Field(..., pattern=r'^\d{2}-\d{2}-\d{4}$')  # Формат ДД-ММ-ГГГГ
+    date_of_birth: str = Field(..., pattern=r'^\d{2}-\d{2}-\d{4}$')  # строка ДД-ММ-ГГГГ
 
 
     @field_validator('date_of_birth')
-    def validate_date_of_birth(cls, v: str) -> str:
+    def validate_date_of_birth(cls, v: str) -> date:
         try:
-            datetime.strptime(v, "%d-%m-%Y")
-        except ValueError as e:
+            return datetime.strptime(v, "%d-%m-%Y").date()
+        except:
             raise HTTPException(status_code=400, detail=f"Дата некорректна. Пожалуйста, проверьте правильность дня, месяца и года.")
-        return v
-
 
 class DemoAnalysisRequest(BaseModel):
     date_of_birth: str = Field(alias='birth')
@@ -47,7 +45,7 @@ class MatrixType(str, Enum):
 
 
 class MatrixRequest(BaseModel):
-    user_id: UUID = Field(alias='user_id')
+    user_id: str
     matrix_type: MatrixType
 
 
@@ -57,12 +55,12 @@ class CompatibilityRequest(BaseModel):
 
 
 class ErrorType(str, Enum):
-    karma_error = 'karma'
-    family_error = 'family'
+    karma = 'karma'
+    family = 'family'
 
 
 class ErrorsRequest(BaseModel):
-    user_id: str = Field(alias='user_id')
+    user_id: str
     error_type: ErrorType
 
 
