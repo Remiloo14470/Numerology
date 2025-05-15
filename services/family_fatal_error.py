@@ -3,14 +3,12 @@ from services.reduce_to_22 import reduce_to_22
 
 def calculate_err(error_type: str, userdata) -> dict:
     if error_type == "karma":
-        result = calculate_karma_errors(userdata)
+        return calculate_karma_errors(userdata)
     elif error_type == "family":
-        result = calculate_family_errors(userdata)
+        return calculate_family_errors(userdata)
     else:
         raise ValueError("Invalid error type")
 
-    result['error_type'] = error_type
-    return result
 
 
 def calculate_karma_errors(userdata) -> dict:

@@ -84,8 +84,10 @@ async def calculate_errors(data: requests.ErrorsRequest):
         await db.add_row(
             UserErrors,
             user_id=user.id,
-            **karma_errors
+            errors=karma_errors,
+            error_type=data.error_type
         )
+
         return JSONResponse(content={"karma_errors": karma_errors}, status_code=200)
 
     elif data.error_type == requests.ErrorType.family:
@@ -93,7 +95,8 @@ async def calculate_errors(data: requests.ErrorsRequest):
         await db.add_row(
             UserErrors,
             user_id=user.id,
-            **family_errors
+            errors=family_errors,
+            error_type=data.error_type
         )
         return JSONResponse(content={"family_errors": family_errors}, status_code=200)
 
