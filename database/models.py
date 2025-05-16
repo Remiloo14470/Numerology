@@ -34,6 +34,7 @@ class UserData(Base):
 class ErrorType(PyEnum):
     karma = 'karma'
     family = 'family'
+    major_past_error = 'major_past_error'
 
 
 class UserErrors(Base):

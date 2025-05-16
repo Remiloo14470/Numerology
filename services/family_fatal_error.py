@@ -48,6 +48,12 @@ def calculate_family_errors(userdata) -> dict:
     family_error_of_health_left =reduce_to_22(familydata['fatal_error'] + userdata.health)
     family_error_of_health_right =reduce_to_22(familydata['mother_error_female'] + userdata.health)
 
+    error_from_past_of_personality = reduce_to_22(familydata['mother_error_female']+familydata['father_error_male'])
+    error_from_past_of_spirituality = reduce_to_22(familydata['father_error_male']+familydata['mother_error_male'])
+    error_from_past_of_money = reduce_to_22(familydata['mother_error_male']+familydata['father_error_female'])
+    error_from_past_of_relations = reduce_to_22(familydata['father_error_female']+familydata['fatal_error'])
+    error_from_past_of_health = reduce_to_22(familydata['fatal_error']+familydata['mother_error_female'])
+
     return {
         'family_error_of_personality_left': family_error_of_personality_left,
         'family_error_of_personality_right': family_error_of_personality_right,
@@ -59,22 +65,12 @@ def calculate_family_errors(userdata) -> dict:
         'family_error_of_relations_right': family_error_of_relations_right,
         'family_error_of_health_left': family_error_of_health_left,
         'family_error_of_health_right': family_error_of_health_right,
+        'error_from_past_of_personality': error_from_past_of_personality,
+        'error_from_past_of_spirituality': error_from_past_of_spirituality,
+        'error_from_past_of_money': error_from_past_of_money,
+        'error_from_past_of_relations': error_from_past_of_relations,
+        'error_from_past_of_health': error_from_past_of_health,
     }
 
-#
-# def major_error_from_a_past_life(userdata):
-#     error_from_past_of_personality = reduce_to_22(userdata.mother_error_female+userdata.father_error_male)
-#     error_from_past_of_spirituality = reduce_to_22(userdata.father_error_male+userdata.mother_error_male)
-#     error_from_past_of_money = reduce_to_22(userdata.mother_error_male+userdata.father_error_female)
-#     error_from_past_of_relations = reduce_to_22(userdata.father_error_female+userdata.fatal_error)
-#     error_from_past_of_health = reduce_to_22(userdata.fatal_error+userdata.mother_error_female)
-#
-#     return {
-#         'error_from_past_of_personality': error_from_past_of_personality,
-#         'error_from_past_of_spirituality': error_from_past_of_spirituality,
-#         'error_from_past_of_money': error_from_past_of_money,
-#         'error_from_past_of_relations': error_from_past_of_relations,
-#         'error_from_past_of_health': error_from_past_of_health,
-#     }
 
 

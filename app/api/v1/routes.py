@@ -29,6 +29,7 @@ async def create_user(data: requests.UserRequest):
 
 @api_router.post("/demo-analysis")
 async def demo_analysis(data: requests.DemoAnalysisRequest):
+
     return JSONResponse(content={"message": f"Демо-анализ для даты рождения {data.birth_date}"}, status_code=200)
 
 
@@ -87,6 +88,7 @@ async def calculate_errors(data: requests.ErrorsRequest):
             errors=karma_errors,
             error_type=data.error_type
         )
+
 
         return JSONResponse(content={"karma_errors": karma_errors}, status_code=200)
 
