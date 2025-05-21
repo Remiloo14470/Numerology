@@ -1,13 +1,17 @@
 from fastapi import HTTPException
 from services.destiny_potential_matrix import calculate
 from services.family_fatal_error import calculate_err
+from services.soul_code import calс_soul_code
 from app.models import requests
 from app.models import responses
 from database.initial import db
 from uuid import uuid4
+import base64
 from app.api.initial import api_router
 from fastapi.responses import JSONResponse
-from database.models import Users, UserData, UserErrors
+from database.models import Users, UserData, UserErrors, UserCodes
+from utils.assistant_request import send_message_to_assistant
+from utils.generate_voice import synth_request_eleven_labs
 
 # Эндпоинты
 
@@ -27,10 +31,71 @@ async def create_user(data: requests.UserRequest):
     )
 
 
-@api_router.post("/demo-analysis")
+@api_router.post("/demo-analysis/{user_id}", response_model=responses.DemoAnalysisResponse)
 async def demo_analysis(data: requests.DemoAnalysisRequest):
 
-    return JSONResponse(content={"message": f"Демо-анализ для даты рождения {data.birth_date}"}, status_code=200)
+    userdata = await db.get_row(UserData, user_id=data.user_id)
+    if not userdata:
+        raise HTTPException(status_code=204, detail="UserData not found")
+
+    # Получаем family ошибки
+    family_errors = await db.get_row(
+        UserErrors,
+        user_id=userdata.user_id,
+        error_type="family",
+    )
+    if not family_errors:
+        raise HTTPException(status_code=204, detail="Family errors not found")
+
+    # Получаем karma ошибки
+    karma_errors = await db.get_row(
+        UserErrors,
+        user_id=userdata.user_id,
+        error_type="karma",
+    )
+    if not karma_errors:
+        raise HTTPException(status_code=204, detail="Karma errors not found")
+
+    # Извлекаем значения из JSON-полей
+    try:
+        errors_family = family_errors.errors
+        errors_karma = karma_errors.errors
+
+    except KeyError as e:
+        raise HTTPException(status_code=500, detail=f"Missing key in error data: {e}")
+
+    # Формируем промпт для ассистента
+    prompt = (
+        "Сделай краткий демо-анализ по духовному треугольнику пользователя на основе следующих данных:\n\n"
+        f"- Основной показатель - аркан духовности: {userdata.spirituality}\n"
+        "- Ошибки рода по духовной линии:\n"
+        f"  • Левый канал (по женской линии): {errors_family['family_error_of_spirituality_left']}\n"
+        f"  • Правый канал (по мужской линии): {errors_family['family_error_of_spirituality_right']}\n"
+        f"  • Ошибки из прошлых воплощений: {errors_family['error_from_past_of_spirituality']}\n"
+        "- Кармические ошибки:\n"
+        f"  • Отца по мужской линии: {errors_karma['father_error_male']}\n"
+        f"  • Матери по мужской линии: {errors_karma['mother_error_male']}\n\n"
+        "Проанализируй эти цифры как нумеролог Надо Амири, кратко опиши сильные и слабые стороны, "
+        "укажи, что может мешать духовному развитию, и как это может проявляться в жизни. "
+        "Ответ должен быть кратким и понятным для обычного человека, как будто это первая встреча с нумерологией."
+        "Тебе нужно описать эти цифры и покзать, что они взаимосвязаны с остальными цифрами его звезды. Заинтересовать"
+        "и дальше раскрыть остальные треугольники"
+    )
+
+    # Отправляем промпт с цифрами ассистенту
+    response = await send_message_to_assistant(prompt)
+    if not response:
+        raise HTTPException(status_code=500, detail="Assistant failed to respond")
+
+    # Озвучиваем текст
+    audio_bytes = await synth_request_eleven_labs(text=response)
+    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+    # Возвращаем результат
+    return {
+        "text": response,
+        "audio_base64": audio_base64
+    }
 
 
 @api_router.post("/luck-code")
@@ -89,7 +154,6 @@ async def calculate_errors(data: requests.ErrorsRequest):
             error_type=data.error_type
         )
 
-
         return JSONResponse(content={"karma_errors": karma_errors}, status_code=200)
 
     elif data.error_type == requests.ErrorType.family:
@@ -108,5 +172,21 @@ async def calculate_soul_mission(request: requests.SoulMissionRequest):
 
 
 @api_router.post("/soul-code")
-async def calculate_soul_code(request: requests.SoulCodeRequest):
-    return JSONResponse(content={"soul_code": "45678"}, status_code=200)
+async def calculate_soul_code(data: requests.SoulCodeRequest):
+    user = await db.get_row(Users, id=data.user_id)
+    if not user:
+        raise HTTPException(status_code=204, detail="User not found")
+    userdata = await db.get_row(UserData, user_id=data.user_id)
+    if not userdata:
+        raise HTTPException(status_code=204, detail="Content not found")
+
+    soul_code = calс_soul_code(userdata)
+
+    await db.add_row(
+        UserCodes,
+        user_id=user.id,
+        numbers=soul_code,
+        code_type='soul_code'
+    )
+
+    return JSONResponse(content={"soul_code": soul_code}, status_code=200)

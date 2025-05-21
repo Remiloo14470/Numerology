@@ -40,3 +40,11 @@ aiogram~=3.20.0.post0
 openai~=1.76.2
 loader~=2017.9.11
 pydantic_settings~=2.9.1
+
+fitz~=0.0.1.dev2
+reportlab~=4.4.1
+requests~=2.32.3
+pydantic-settings~=2.9.1
+langchain-community~=0.3.23
+langchain~=0.3.25
+aiohttp~=3.11.18

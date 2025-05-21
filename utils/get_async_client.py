@@ -1,7 +1,9 @@
 from openai import AsyncOpenAI
-from settings.project_settings import OtherSettings
+from settings.project_settings import Settings
 
-settings = OtherSettings()
+settings = Settings()
 
-client = AsyncOpenAI(api_key=settings.openai_api_key)
+OPENAI_API_KEY = settings.openai_api_key
+
+client = AsyncOpenAI(api_key=OPENAI_API_KEY)
 

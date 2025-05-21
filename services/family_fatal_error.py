@@ -22,6 +22,7 @@ def calculate_karma_errors(userdata) -> dict:
     
     fatal_error = reduce_to_22(userdata.relations + userdata.health)
 
+
     return {
         'father_error_male': father_error_male,
         'mother_error_male': mother_error_male,

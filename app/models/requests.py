@@ -22,7 +22,7 @@ class UserRequest(BaseModel):
             raise HTTPException(status_code=400, detail=f"Дата некорректна. Пожалуйста, проверьте правильность дня, месяца и года.")
 
 class DemoAnalysisRequest(BaseModel):
-    date_of_birth: str = Field(alias='birth')
+    user_id: str
 
 
 class LuckCodeRequest(BaseModel):
@@ -65,11 +65,11 @@ class ErrorsRequest(BaseModel):
 
 
 class SoulMissionRequest(BaseModel):
-    date_of_birth: str = Field(alias='birth')
+    user_id: str
 
 
 class SoulCodeRequest(BaseModel):
-    date_of_birth: date = Field(alias='birth')
+    user_id: str
 
 
 

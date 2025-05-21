@@ -13,6 +13,7 @@ class Users(Base):
 
     user_data: Mapped[list["UserData"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     user_errors: Mapped[list["UserErrors"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    user_codes: Mapped[list["UserCodes"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class UserData(Base):
@@ -34,7 +35,6 @@ class UserData(Base):
 class ErrorType(PyEnum):
     karma = 'karma'
     family = 'family'
-    major_past_error = 'major_past_error'
 
 
 class UserErrors(Base):
@@ -47,3 +47,15 @@ class UserErrors(Base):
     error_type: Mapped[ErrorType] = mapped_column(SqlEnum(ErrorType), nullable=False)
 
     user: Mapped["Users"] = relationship(back_populates="user_errors")
+
+
+class UserCodes(Base):
+    __tablename__ = 'user_codes'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    numbers: Mapped[dict] = mapped_column(JSON)
+    code_type: Mapped[str] = mapped_column(String, nullable=False)
+
+    user: Mapped["Users"] = relationship(back_populates="user_codes")

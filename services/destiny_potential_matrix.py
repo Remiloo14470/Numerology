@@ -34,12 +34,3 @@ def calculate_destiny_matrix(birth_date: date) -> dict:
         "health": health,
         "soul_mission": soul_mission
     }
-
-test_date = date(1986, 11, 27)
-user_data = calculate_destiny_matrix(test_date)
-
-if __name__ == "__main__":
-    from datetime import date
-
-    result = calculate(test_date, "destiny")
-    print(result)
