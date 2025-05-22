@@ -4,8 +4,7 @@ from preload import *
 from utils.create_assistant import create_assistant
 
 async def startup() -> None:
-    assistant_id = create_assistant()
-    print(assistant_id)
+    assistant_id = await create_assistant()
 
 
 if __name__ == "__main__":

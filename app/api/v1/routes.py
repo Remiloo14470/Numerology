@@ -11,7 +11,7 @@ from app.api.initial import api_router
 from fastapi.responses import JSONResponse
 from database.models import Users, UserData, UserErrors, UserCodes
 from utils.assistant_request import send_message_to_assistant
-from utils.generate_voice import synth_request_eleven_labs
+# from utils.generate_voice import synth_request_eleven_labs
 
 # Эндпоинты
 
@@ -79,7 +79,7 @@ async def demo_analysis(data: requests.DemoAnalysisRequest):
         "укажи, что может мешать духовному развитию, и как это может проявляться в жизни. "
         "Ответ должен быть кратким и понятным для обычного человека, как будто это первая встреча с нумерологией."
         "Тебе нужно описать эти цифры и покзать, что они взаимосвязаны с остальными цифрами его звезды. Заинтересовать"
-        "и дальше раскрыть остальные треугольники"
+        "клиента дальше раскрыть другие треугольники"
     )
 
     # Отправляем промпт с цифрами ассистенту
@@ -87,14 +87,13 @@ async def demo_analysis(data: requests.DemoAnalysisRequest):
     if not response:
         raise HTTPException(status_code=500, detail="Assistant failed to respond")
 
-    # Озвучиваем текст
-    audio_bytes = await synth_request_eleven_labs(text=response)
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+    # # Озвучиваем текст
+    # audio_bytes = await synth_request_eleven_labs(text=response)
+    # audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
     # Возвращаем результат
     return {
-        "text": response,
-        "audio_base64": audio_base64
+        "text": response
     }
 
 

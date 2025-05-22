@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     db_user: str = Field(alias='dbuser')
     db_password: str = Field(alias='dbpassword')
     openai_api_key: str = Field(alias="openai_api_key")
-    eleven_labs_api_key: str = Field(alias='eleven_labs_api_key')
-    eleven_labs_voice_id: str = Field(alias='eleven_labs_voice_id')
+    # eleven_labs_api_key: str = Field(alias='eleven_labs_api_key')
+    # eleven_labs_voice_id: str = Field(alias='eleven_labs_voice_id')
 
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
 

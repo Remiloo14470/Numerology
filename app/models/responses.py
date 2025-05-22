@@ -19,7 +19,7 @@ class UserResponse(BaseModel):
 class DemoAnalysisResponse(BaseModel):
     class Info(BaseModel):
         text: str = Field(alias='text')
-        audio_base64: str # либо url, если сохраняешь аудио на диск/S3
+        # audio_base64: str
     class Error(BaseModel):
         error: str
 

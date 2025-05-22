@@ -10,6 +10,7 @@ services:
       POSTGRES_USER: "${DBUSER}"
       POSTGRES_PASSWORD: "${DBPASSWORD}"
       POSTGRES_DB: "${DBNAME}"
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       - db
     volumes:
