@@ -1,11 +1,12 @@
 import asyncio
 from utils.get_async_client import client
 from loguru import logger
-from utils.assistant_state import assistant_id
+from .assistant_state import assistant_id_storage
+
 
 async def send_message_to_assistant(prompt: str) -> str:
     thread = await client.beta.threads.create()
-    logger.info(f"ID Ассистента {assistant_id}")
+
     message = await client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
@@ -14,8 +15,9 @@ async def send_message_to_assistant(prompt: str) -> str:
 
     run = await client.beta.threads.runs.create(
         thread_id=thread.id,
-        assistant_id=assistant_id
+        assistant_id=assistant_id_storage.assistant_id
     )
+
     # Ожидаем завершения работы ассистента
     for _ in range(30):
         await asyncio.sleep(2)

@@ -6,7 +6,6 @@ from app.models import requests
 from app.models import responses
 from database.initial import db
 from uuid import uuid4
-import base64
 from app.api.initial import api_router
 from fastapi.responses import JSONResponse
 from database.models import Users, UserData, UserErrors, UserCodes
@@ -25,6 +24,38 @@ async def create_user(data: requests.UserRequest):
         user_name=data.user_name,
         date_of_birth=data.date_of_birth,
     )
+
+    user = await db.get_row(Users, id=user_id)
+    if not user:
+        raise HTTPException(status_code=204, detail="User not found")
+
+    matrix_data = calculate(user.date_of_birth, matrix_type="destiny")
+    await db.add_row(
+        UserData,
+        user_id=user.id,
+        **matrix_data
+    )
+
+    userdata = await db.get_row(UserData, user_id=user_id)
+    if not userdata:
+        raise HTTPException(status_code=204, detail="Content not found")
+
+    karma_errors = calculate_err("karma", userdata)
+    await db.add_row(
+        UserErrors,
+        user_id=user.id,
+        errors=karma_errors,
+        error_type="karma"
+    )
+
+    family_errors = calculate_err("family", userdata)
+    await db.add_row(
+        UserErrors,
+        user_id=user.id,
+        errors=family_errors,
+        error_type="family"
+    )
+
     return JSONResponse(
         content=responses.UserResponse.model_validate(existing_user).model_dump(),
         status_code=201 if created else 200
@@ -66,15 +97,15 @@ async def demo_analysis(data: requests.DemoAnalysisRequest):
 
     # Формируем промпт для ассистента
     prompt = (
-        "Сделай краткий демо-анализ по духовному треугольнику пользователя на основе следующих данных:\n\n"
-        f"- Основной показатель - аркан духовности: {userdata.spirituality}\n"
-        "- Ошибки рода по духовной линии:\n"
-        f"  • Левый канал (по женской линии): {errors_family['family_error_of_spirituality_left']}\n"
-        f"  • Правый канал (по мужской линии): {errors_family['family_error_of_spirituality_right']}\n"
-        f"  • Ошибки из прошлых воплощений: {errors_family['error_from_past_of_spirituality']}\n"
-        "- Кармические ошибки:\n"
-        f"  • Отца по мужской линии: {errors_karma['father_error_male']}\n"
-        f"  • Матери по мужской линии: {errors_karma['mother_error_male']}\n\n"
+        "Сделай краткий демо-анализ по духовному треугольнику пользователя на основе следующих данных:"
+        f"- Основной показатель - аркан духовности: {userdata.spirituality}"
+        "- Ошибки рода по духовной линии:"
+        f"  • Левый канал (по женской линии): {errors_family['family_error_of_spirituality_left']}"
+        f"  • Правый канал (по мужской линии): {errors_family['family_error_of_spirituality_right']}"
+        f"  • Ошибки из прошлых воплощений: {errors_family['error_from_past_of_spirituality']}"
+        "- Кармические ошибки:"
+        f"  • Отца по мужской линии: {errors_karma['father_error_male']}"
+        f"  • Матери по мужской линии: {errors_karma['mother_error_male']}"
         "Проанализируй эти цифры как нумеролог Надо Амири, кратко опиши сильные и слабые стороны, "
         "укажи, что может мешать духовному развитию, и как это может проявляться в жизни. "
         "Ответ должен быть кратким и понятным для обычного человека, как будто это первая встреча с нумерологией."
@@ -91,11 +122,7 @@ async def demo_analysis(data: requests.DemoAnalysisRequest):
     # audio_bytes = await synth_request_eleven_labs(text=response)
     # audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
-    # Возвращаем результат
-    return {
-        "text": response
-    }
-
+    return JSONResponse(content={"response": response}, status_code=200)
 
 @api_router.post("/luck-code")
 async def generate_luck_code(data: requests.LuckCodeRequest):
