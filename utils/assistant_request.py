@@ -1,13 +1,11 @@
 import asyncio
-from utils.create_assistant import create_assistant
 from utils.get_async_client import client
 from loguru import logger
-
-assistant_id = create_assistant()
+from utils.assistant_state import assistant_id
 
 async def send_message_to_assistant(prompt: str) -> str:
     thread = await client.beta.threads.create()
-
+    logger.info(f"ID Ассистента {assistant_id}")
     message = await client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",

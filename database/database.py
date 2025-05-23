@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, declared_attr
-from settings.project_settings import Settings
+from settings.project_settings import APISettings
 
-settings = Settings()
+settings = APISettings()
 
 DBUSER = settings.db_user
 DBPASSWORD = settings.db_password

@@ -1,7 +1,7 @@
 import aiohttp
-from settings.project_settings import Settings
+from settings.project_settings import APISettings
 
-settings = Settings()
+settings = APISettings()
 ELEVEN_LABS_API_KEY = settings.eleven_labs_api_key
 VOICE_ID = settings.eleven_labs_voice_id
 

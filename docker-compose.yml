@@ -3,6 +3,8 @@ version: '3.9'
 services:
   api:
     build: .
+    env_file:
+    - .env
     container_name: numerology_api
     ports:
       - '8000:8000'
@@ -10,7 +12,7 @@ services:
       POSTGRES_USER: "${DBUSER}"
       POSTGRES_PASSWORD: "${DBPASSWORD}"
       POSTGRES_DB: "${DBNAME}"
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
     depends_on:
       - db
     volumes:
