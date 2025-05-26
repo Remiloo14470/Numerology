@@ -23,6 +23,14 @@ class DemoAnalysisResponse(BaseModel):
     class Error(BaseModel):
         error: str
 
+
+class RelationsResponse(BaseModel):
+    class Info(BaseModel):
+        text: str = Field(alias='text')
+    class Error(BaseModel):
+        error: str
+
+
 class LuckCodeResponse(BaseModel):
     class Info(BaseModel):
         luck_code: str = Field(alias='luck_code')
@@ -35,17 +43,6 @@ class CardTypeResponse(BaseModel):
     class Error(BaseModel):
         error: str
 
-class MatrixResponse(BaseModel):
-    class Info(BaseModel):
-        status: str = Field(alias='status')
-    class Error(BaseModel):
-        error: str
-
-class ErrorResponse(BaseModel):
-    class Info(BaseModel):
-        status: str = Field(alias='status')
-    class Error(BaseModel):
-        error: str
 
 class CompatibilityResponse(BaseModel):
     class Info(BaseModel):

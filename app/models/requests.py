@@ -1,5 +1,4 @@
 from uuid import UUID
-
 from fastapi import HTTPException
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
@@ -21,47 +20,32 @@ class UserRequest(BaseModel):
         except:
             raise HTTPException(status_code=400, detail=f"Дата некорректна. Пожалуйста, проверьте правильность дня, месяца и года.")
 
+
 class DemoAnalysisRequest(BaseModel):
     user_id: str
+
+
+class RelationsRequest(BaseModel):
+    user_id: str
+    partner_birthdate: str = Field(..., pattern=r'^\d{2}-\d{2}-\d{4}$')  # строка ДД-ММ-ГГГГ
+
+    @field_validator('partner_birthdate')
+    def validate_date_of_birth(cls, v: str) -> date:
+        try:
+            return datetime.strptime(v, "%d-%m-%Y").date()
+        except:
+            raise HTTPException(status_code=400,
+                                detail=f"Дата некорректна. Пожалуйста, проверьте правильность дня, месяца и года.")
 
 
 class LuckCodeRequest(BaseModel):
     date_of_birth: date = Field(alias='birth')
 
 
-class CardType(str, Enum):
-    destiny ='destiny'
-    time ='time'
-
-
-class CardRequest(BaseModel):
-    date_of_birth: date = Field(alias='birth')
-    card_type: CardType
-
-
-class MatrixType(str, Enum):
-    potential = 'potential'
-    destiny = 'destiny'
-
-
-class MatrixRequest(BaseModel):
-    user_id: str
-    matrix_type: MatrixType
-
-
 class CompatibilityRequest(BaseModel):
     city: str = Field(alias='city')
     business: str = Field(alias='business')
 
-
-class ErrorType(str, Enum):
-    karma = 'karma'
-    family = 'family'
-
-
-class ErrorsRequest(BaseModel):
-    user_id: str
-    error_type: ErrorType
 
 
 class SoulMissionRequest(BaseModel):

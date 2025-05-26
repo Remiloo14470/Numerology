@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from services.destiny_potential_matrix import calculate
 from services.family_fatal_error import calculate_err
 from services.soul_code import calс_soul_code
+from services.destiny_year_numbers import calc_destiny_number, calculate_personal_year
 from app.models import requests
 from app.models import responses
 from database.initial import db
@@ -30,9 +31,11 @@ async def create_user(data: requests.UserRequest):
         raise HTTPException(status_code=204, detail="User not found")
 
     matrix_data = calculate(user.date_of_birth, matrix_type="destiny")
+    personal_year_number = calculate_personal_year(user.date_of_birth)
     await db.add_row(
         UserData,
         user_id=user.id,
+        personal_year_number=personal_year_number,
         **matrix_data
     )
 
@@ -137,23 +140,63 @@ async def generate_card(data: requests.CardRequest):
         return JSONResponse(content={"message": "Рассчитываем Карту Времени"}, status_code=200)
 
 
-@api_router.post("/matrix", response_model=responses.MatrixResponse)
-async def calculate_matrix(data: requests.MatrixRequest):
+@api_router.post("/relations", response_model=responses.RelationsResponse)
+async def calculate_relations(data: requests.RelationsRequest):
 
-    user = await db.get_row(Users, id=data.user_id)
-    if not user:
-        raise HTTPException(status_code=204, detail="User not found")
+    userdata = await db.get_row(UserData, user_id=data.user_id)
+    if not userdata:
+        raise HTTPException(status_code=204, detail="UserData not found")
 
-    matrix_data = calculate(user.date_of_birth, data.matrix_type)
+    # Получаем family ошибки
+    family_errors = await db.get_row(
+        UserErrors,
+        user_id=userdata.user_id,
+        error_type="family",
+    )
+    if not family_errors:
+        raise HTTPException(status_code=204, detail="Family errors not found")
 
-    if data.matrix_type == requests.MatrixType.destiny:
-        await db.add_row(
-            UserData,
-            user_id=user.id,
-            **matrix_data
-        )
+    # Получаем karma ошибки
+    karma_errors = await db.get_row(
+        UserErrors,
+        user_id=userdata.user_id,
+        error_type="karma",
+    )
+    if not karma_errors:
+        raise HTTPException(status_code=204, detail="Karma errors not found")
 
-    return JSONResponse(content={"matrix_data": matrix_data}, status_code=200)
+    # Извлекаем значения из JSON-полей
+    try:
+        errors_family = family_errors.errors
+        errors_karma = karma_errors.errors
+
+    except KeyError as e:
+        raise HTTPException(status_code=500, detail=f"Missing key in error data: {e}")
+
+    # Формируем промпт для ассистента
+    prompt = (
+        "Сделай глубокий анализ по треугольнику отношений пользователя на основе следующих данных:"
+        f"- Основной показатель - аркан духовности: {userdata.relations}"
+        "- Ошибки рода:"
+        f"  • Левый канал (по женской линии): {errors_family['family_error_of_relations_left']}"
+        f"  • Правый канал (по мужской линии): {errors_family['family_error_of_relations_right']}"
+        f"  • Ошибки из прошлых воплощений: {errors_family['error_from_past_of_relations']}"
+        "- Кармические ошибки:"
+        f"  • Отца по женской линии: {errors_karma['father_error_female']}"
+        f"  • Матери по мужской линии: {errors_karma['fatal_error']}"
+        "Проанализируй эти цифры как нумеролог Надо Амири, кратко опиши сильные и слабые стороны, "
+        "укажи, что может мешать развитию отношений, и как это может проявляться в жизни. "
+        "Ответ должен быть понятным для обычного человека."
+        "Тебе нужно описать эти цифры и покзать, что они взаимосвязаны с остальными цифрами его звезды. Заинтересовать"
+        "клиента дальше раскрыть другие треугольники"
+    )
+
+    # Отправляем промпт с цифрами ассистенту
+    response = await send_message_to_assistant(prompt)
+    if not response:
+        raise HTTPException(status_code=500, detail="Assistant failed to respond")
+
+    return JSONResponse(content={"response": response}, status_code=200)
 
 
 @api_router.post("/compatibility")
