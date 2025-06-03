@@ -1,7 +1,7 @@
 from services.reduce_to_22 import reduce_to_22
 
 
-def calculate_err(error_type: str, userdata) -> dict:
+def calculate_errors(error_type: str, userdata) -> dict:
     if error_type == "karma":
         return calculate_karma_errors(userdata)
     elif error_type == "family":

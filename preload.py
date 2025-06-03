@@ -3,8 +3,8 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from database.initial import db
 from loguru import logger
-from app.api.v1.routes import create_user, demo_analysis, generate_luck_code, generate_card, check_compatibility
-from app.api.v1.routes import calculate_soul_code, calculate_soul_mission, calculate_matrix, calculate_errors
+from app.api.v1.routes import create_user, demo_analysis, check_compatibility, generate_luck_code_and_rhythm
+from app.api.v1.routes import calculate_soul_code, calculate_soul_mission
 from utils.assistant_state import assistant_id_storage
 from utils.create_assistant import create_assistant
 

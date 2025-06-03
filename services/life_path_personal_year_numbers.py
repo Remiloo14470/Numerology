@@ -2,7 +2,7 @@ from datetime import date, datetime
 from services.reduce_to_22 import reduce_to_22
 
 
-def calc_destiny_number(birth_date: date):
+def calculate_life_path_number(birth_date: date):
     digits = [int(ch) for ch in birth_date.strftime("%Y%m%d")]
     total = sum(digits)
     return reduce_to_22(total)

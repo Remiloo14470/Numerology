@@ -8,12 +8,13 @@ class Users(Base):
     __tablename__ = 'users'
 
     id: Mapped[str] = mapped_column(String, primary_key=True)
-    user_name: Mapped[str] = mapped_column(String)
+    user_name_surname: Mapped[str] = mapped_column(String)
     date_of_birth: Mapped[Date] = mapped_column(Date)
 
     user_data: Mapped[list["UserData"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     user_errors: Mapped[list["UserErrors"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     user_codes: Mapped[list["UserCodes"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    user_partners: Mapped[list["UserPartners"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class UserData(Base):
@@ -28,13 +29,10 @@ class UserData(Base):
     relations: Mapped[int] = mapped_column(Integer, nullable=False)
     health: Mapped[int] = mapped_column(Integer, nullable=False)
     soul_mission: Mapped[int] = mapped_column(Integer, nullable=False)
+    personal_year_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    life_path_number: Mapped[int] = mapped_column(Integer, nullable=False)
 
     user: Mapped["Users"] = relationship(back_populates="user_data")
-
-
-class ErrorType(PyEnum):
-    karma = 'karma'
-    family = 'family'
 
 
 class UserErrors(Base):
@@ -44,7 +42,7 @@ class UserErrors(Base):
     user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     errors: Mapped[dict] = mapped_column(JSON)
-    error_type: Mapped[ErrorType] = mapped_column(SqlEnum(ErrorType), nullable=False)
+    error_type: Mapped[str] = mapped_column(String, nullable=False)
 
     user: Mapped["Users"] = relationship(back_populates="user_errors")
 
@@ -59,3 +57,17 @@ class UserCodes(Base):
     code_type: Mapped[str] = mapped_column(String, nullable=False)
 
     user: Mapped["Users"] = relationship(back_populates="user_codes")
+
+
+class UserPartners(Base):
+    __tablename__ = 'user_partners'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    partner_birthdate: Mapped[Date] = mapped_column(Date, nullable=False)
+    partner_matrix: Mapped[dict] = mapped_column(JSON)
+    partner_karma: Mapped[dict] = mapped_column(JSON)
+    partner_family: Mapped[dict] = mapped_column(JSON)
+
+    user: Mapped["Users"] = relationship(back_populates="user_partners")

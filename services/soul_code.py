@@ -2,7 +2,7 @@ from services.reduce_to_22 import reduce_to_22
 from services.family_fatal_error import calculate_karma_errors
 
 
-def calс_soul_code(userdata) -> dict:
+def calculate_soul_code(userdata) -> dict:
 
     karma_errors = calculate_karma_errors(userdata)
 
