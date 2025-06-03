@@ -131,17 +131,18 @@ def calculate_city_country_code(birth_date: date, life_path_number: int, city_na
         if char in mapping:
             city_number += mapping[char]
 
-    reduced_city_number = reduce_to_9(city_number)
+    city_number = reduce_to_9(city_number)
 
     # Вычисляем совместимость со страной
-    country_number = reduce_to_9(birth_date.day)
+    country_number = reduce_to_22(birth_date.day)
+    if country_number in [11,22]:
+        country_number = 2
+
     life_path_number = reduce_to_9(life_path_number)
 
-    if life_path_number in [11,22,33]:
-        life_path_number = 2
 
     return {
-        "city_number": reduced_city_number,
+        "city_number": city_number,
         "country_number": country_number,
         "life_path_number_for_country": life_path_number
     }
@@ -149,6 +150,7 @@ def calculate_city_country_code(birth_date: date, life_path_number: int, city_na
 
 def calculate_business_compatibility(reg_date: date, life_path_number: int) -> int:
     business_number = reduce_to_9(sum(int(ch) for ch in reg_date.strftime("%Y%d%m")))
+
     return business_number
 
 
