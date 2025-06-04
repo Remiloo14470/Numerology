@@ -71,8 +71,8 @@ def calculate_luck_number_by_weekday(birth_date: date) -> int:
     }
     weekday = birth_date.weekday()  # 0 - понедельник, ..., 6 - воскресенье
     code = day_codes.get(weekday)
-    luck_number = code + 1
-    return luck_number
+    luck_number_by_weekday = code + 1
+    return luck_number_by_weekday
 
 
 def calculate_protection_number(birth_date: date) -> int:
@@ -130,28 +130,23 @@ def calculate_city_country_code(birth_date: date, life_path_number: int, city_na
     for char in city_name.upper():
         if char in mapping:
             city_number += mapping[char]
+    city_number = reduce_to_22(city_number)
 
-    city_number = reduce_to_9(city_number)
-
-    # Вычисляем совместимость со страной
-    country_number = reduce_to_22(birth_date.day)
-    if country_number in [11,22]:
-        country_number = 2
-
-    life_path_number = reduce_to_9(life_path_number)
-
+    # Вычисляем число страны
+    country_number = reduce_to_9(reduce_to_22(birth_date.day))
 
     return {
         "city_number": city_number,
-        "country_number": country_number,
-        "life_path_number_for_country": life_path_number
+        "country_number": country_number
     }
 
 
-def calculate_business_compatibility(reg_date: date, life_path_number: int) -> int:
+def calculate_business_compatibility(reg_date: date, life_path_number: int) -> dict:
     business_number = reduce_to_9(sum(int(ch) for ch in reg_date.strftime("%Y%d%m")))
 
-    return business_number
-
+    return {
+        "business_number" : business_number,
+        "life_path_number": life_path_number
+    }
 
 
